@@ -1,10 +1,12 @@
+import { defineWorkflow, type WorkflowStep } from "agentcmd-workflows";
+
+// Type definitions from monorepo-wide generated types
 import {
   buildSlashCommand,
-  defineWorkflow,
-  type WorkflowStep,
+  type CmdCreatePrResponse,
   type CmdImplementSpecResponse,
   type CmdReviewSpecImplementationResponse,
-} from "agentcmd-workflows";
+} from "../../generated/slash-commands";
 
 /**
  * Workflow context for sharing state between phases via closure.
@@ -69,6 +71,12 @@ export default defineWorkflow(
           ctx,
         });
 
+        // Commit implementation changes
+        await step.git(`commit-implementation-cycle-${cycle}`, {
+          operation: "commit",
+          message: `feat: implement ${event.data.name} (cycle ${cycle})`,
+        });
+
         // Review implementation (updates ctx.lastReview)
         const review = await reviewImplementation({
           cycle,
@@ -76,6 +84,12 @@ export default defineWorkflow(
           specFile,
           workingDir,
           ctx,
+        });
+
+        // Commit review changes
+        await step.git(`commit-review-cycle-${cycle}`, {
+          operation: "commit",
+          message: `chore: address review feedback (cycle ${cycle})`,
         });
 
         await step.annotation("review-cycle-completed", {
@@ -96,11 +110,6 @@ export default defineWorkflow(
     });
 
     await step.phase("complete", async () => {
-      // Safety check: ensure we have implementation and review data
-      if (!ctx.lastImplement || !ctx.lastReview) {
-        throw new Error("Missing implementation or review data");
-      }
-
       // Move spec to done folder and updates index.json
       await step.agent("complete-spec", {
         agent: "claude",
@@ -111,16 +120,23 @@ export default defineWorkflow(
       });
 
       // Create PR with implementation summary and review status
-      await step.git("create-pull-request", {
-        operation: "pr",
-        title: `feat: ${ctx.lastImplement.feature_name}`,
-        body: generatePrBody({
-          summary: ctx.lastImplement.summary,
-          issuesFound: ctx.lastReview.issues_found,
-          specFile,
-        }),
-        baseBranch: event.data.baseBranch,
-      });
+      const prResult = await step.agent<CmdCreatePrResponse>(
+        "commit-push-and-create-pr",
+        {
+          agent: "claude",
+          json: true,
+          prompt: buildSlashCommand("/cmd:create-pr", {
+            title: `feat: ${event.data.name}`,
+          }),
+        }
+      );
+
+      if (!prResult.data.success) {
+        throw new Error(`PR creation failed: ${prResult.data.message}`);
+      }
+
+      // Links the created PR url to the run
+      await step.updateRun({ pr_url: prResult.data.pr_url });
     });
   }
 );
@@ -228,38 +244,4 @@ async function reviewImplementation({
 
   ctx.lastReview = result.data;
   return result.data;
-}
-
-/**
- * Generate PR body from implementation and review data.
- *
- * Creates a formatted markdown description including:
- * - Implementation summary
- * - Spec file reference
- * - Review status (ready or issues count)
- * - Workflow attribution
- *
- * @param summary - Implementation summary text
- * @param issuesFound - Number of issues found in review
- * @param specFile - Spec file path for reference
- * @returns Formatted PR body markdown
- */
-function generatePrBody({
-  summary,
-  issuesFound,
-  specFile,
-}: {
-  summary: string;
-  issuesFound: number;
-  specFile: string;
-}): string {
-  const status =
-    issuesFound === 0 ? "Ready for review" : `${issuesFound} issues found`;
-
-  return `${summary}
-
-**Spec**: \`${specFile}\`
-**Status**: ${status}
-
-🤖 Generated with implement-review-workflow`;
 }
