@@ -1,3 +1,15 @@
 {
-  "specs": {}
+  "specs": {
+    "2511241603": {
+      "folder": "2511241603-priority-system",
+      "path": "todo/2511241603-priority-system/spec.md",
+      "spec_type": "feature",
+      "status": "draft",
+      "created": "2025-11-24T16:03:00Z",
+      "updated": "2025-11-24T16:03:00Z",
+      "totalComplexity": 38,
+      "phaseCount": 3,
+      "taskCount": 8
+    }
+  }
 }
