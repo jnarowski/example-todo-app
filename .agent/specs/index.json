@@ -1,3 +1,15 @@
 {
-  "specs": {}
+  "specs": {
+    "2511241504": {
+      "folder": "2511241504-localstorage-persistence",
+      "path": "todo/2511241504-localstorage-persistence/spec.md",
+      "spec_type": "feature",
+      "status": "review",
+      "created": "2025-11-24T22:05:56Z",
+      "updated": "2025-11-24T22:09:00Z",
+      "totalComplexity": 42,
+      "phaseCount": 3,
+      "taskCount": 9
+    }
+  }
 }
