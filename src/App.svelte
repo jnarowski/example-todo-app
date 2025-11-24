@@ -1,7 +1,119 @@
 <script>
+  import { onMount } from 'svelte';
+
+  // Storage constants
+  const STORAGE_KEY = 'svelte-todo-app-v1';
+  const STORAGE_VERSION = 1;
+
+  // Storage utility: Check if localStorage is available
+  function isStorageAvailable() {
+    try {
+      const test = '__storage_test__';
+      localStorage.setItem(test, test);
+      localStorage.removeItem(test);
+      return true;
+    } catch (e) {
+      console.warn('localStorage is not available:', e);
+      return false;
+    }
+  }
+
+  // Storage utility: Validate loaded data structure
+  function validateStorageData(data) {
+    if (!data || typeof data !== 'object') {
+      console.warn('Invalid storage data: not an object');
+      return false;
+    }
+
+    if (!Array.isArray(data.todos)) {
+      console.warn('Invalid storage data: todos is not an array');
+      return false;
+    }
+
+    if (typeof data.nextId !== 'number') {
+      console.warn('Invalid storage data: nextId is not a number');
+      return false;
+    }
+
+    // Validate each todo item
+    for (const todo of data.todos) {
+      if (typeof todo.id !== 'number' ||
+          typeof todo.text !== 'string' ||
+          typeof todo.completed !== 'boolean') {
+        console.warn('Invalid storage data: todo item has incorrect types');
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  // Storage utility: Load todos from localStorage
+  function loadTodosFromStorage() {
+    if (!isStorageAvailable()) {
+      return null;
+    }
+
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) {
+        return null;
+      }
+
+      const data = JSON.parse(stored);
+
+      if (!validateStorageData(data)) {
+        console.warn('Clearing invalid storage data');
+        localStorage.removeItem(STORAGE_KEY);
+        return null;
+      }
+
+      console.log(`Loaded ${data.todos.length} todos from storage`);
+      return data;
+    } catch (e) {
+      console.error('Error loading from storage:', e);
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+  }
+
+  // Storage utility: Save todos to localStorage
+  function saveTodosToStorage(todos, nextId) {
+    if (!isStorageAvailable()) {
+      return;
+    }
+
+    try {
+      const data = {
+        todos,
+        nextId,
+        version: STORAGE_VERSION,
+        timestamp: new Date().toISOString()
+      };
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      if (e.name === 'QuotaExceededError') {
+        console.error('Storage quota exceeded. Unable to save todos.');
+      } else {
+        console.error('Error saving to storage:', e);
+      }
+    }
+  }
+
   let todos = [];
   let newTodo = '';
   let nextId = 1;
+
+  // Load persisted todos on component mount
+  onMount(() => {
+    const data = loadTodosFromStorage();
+    if (data) {
+      todos = data.todos;
+      nextId = data.nextId;
+      console.log(`Loaded ${todos.length} todos from storage`);
+    }
+  });
 
   function addTodo() {
     if (newTodo.trim()) {
@@ -28,6 +140,11 @@
 
   $: activeTodos = todos.filter(todo => !todo.completed).length;
   $: completedTodos = todos.filter(todo => todo.completed).length;
+
+  // Auto-save todos to localStorage whenever they change
+  $: if (todos) {
+    saveTodosToStorage(todos, nextId);
+  }
 </script>
 
 <div class="todo-app">

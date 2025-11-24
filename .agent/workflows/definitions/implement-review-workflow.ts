@@ -1,7 +1,7 @@
 import { defineWorkflow, type WorkflowStep } from "agentcmd-workflows";
 
-// generated functions and types from your slash commands
-// run `pnpm exec agentcmd-workflows generate-slash-types to generate these files
+// Type-safe wrappers for slash commands defined in .claude/commands/
+// After editing commands, regenerate: npx agentcmd-workflows generate-slash-types
 import {
   buildSlashCommand,
   type CmdCreatePrResponse,
