@@ -1,12 +1,14 @@
 <script>
   let todos = [];
   let newTodo = '';
+  let newPriority = 'medium';
   let nextId = 1;
 
   function addTodo() {
     if (newTodo.trim()) {
-      todos = [...todos, { id: nextId++, text: newTodo, completed: false }];
+      todos = [...todos, { id: nextId++, text: newTodo, completed: false, priority: newPriority }];
       newTodo = '';
+      newPriority = 'medium';
     }
   }
 
@@ -28,6 +30,15 @@
 
   $: activeTodos = todos.filter(todo => !todo.completed).length;
   $: completedTodos = todos.filter(todo => todo.completed).length;
+
+  // Priority order mapping for sorting
+  const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+
+  // Sort todos by priority, then by ID (creation order)
+  $: sortedTodos = [...todos].sort((a, b) => {
+    const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
+    return priorityDiff !== 0 ? priorityDiff : a.id - b.id;
+  });
 </script>
 
 <div class="todo-app">
@@ -47,12 +58,21 @@
         placeholder="What needs to be done?"
         class="todo-input"
       />
+      <select bind:value={newPriority} class="priority-select">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="critical">Critical</option>
+      </select>
       <button on:click={addTodo} class="add-button">Add</button>
     </div>
 
     <ul class="todo-list">
-      {#each todos as todo (todo.id)}
+      {#each sortedTodos as todo (todo.id)}
         <li class="todo-item" class:completed={todo.completed}>
+          <span class="priority-badge priority-{todo.priority}">
+            {todo.priority}
+          </span>
           <input
             type="checkbox"
             checked={todo.completed}
@@ -65,7 +85,7 @@
           </button>
         </li>
       {/each}
-      {#if todos.length === 0}
+      {#if sortedTodos.length === 0}
         <li class="empty-state">No todos yet. Add one above!</li>
       {/if}
     </ul>
@@ -147,8 +167,58 @@
     transform: translateY(0);
   }
 
+  .priority-select {
+    padding: 12px 16px;
+    font-size: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    outline: none;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    min-width: 120px;
+  }
+
+  .priority-select:hover {
+    border-color: #c0c0c0;
+  }
+
+  .priority-select:focus {
+    border-color: #667eea;
+  }
+
   .todo-list {
     list-style: none;
+  }
+
+  .priority-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .priority-critical {
+    background: #e74c3c;
+    color: white;
+  }
+
+  .priority-high {
+    background: #e67e22;
+    color: white;
+  }
+
+  .priority-medium {
+    background: #3498db;
+    color: white;
+  }
+
+  .priority-low {
+    background: #95a5a6;
+    color: white;
   }
 
   .todo-item {
