@@ -1,0 +1,35 @@
+# Agent workflow artifacts
+.agent/logs/**
+.agent/workflows/runs/**
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+.svelte-kit/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Cache
+.cache/
+.vite/

@@ -1,0 +1,17 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "generate-slash-types": "pnpm agentcmd-workflows generate-slash-types"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.0.1",
+    "agentcmd-workflows": "^1.1.11",
+    "svelte": "^4.2.8",
+    "vite": "^5.0.10"
+  }
+}
