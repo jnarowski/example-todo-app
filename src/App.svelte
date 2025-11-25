@@ -1,7 +1,24 @@
 <script>
+  import { onMount } from 'svelte';
+  import { saveTodos, loadTodos } from './lib/storage.js';
+
   let todos = [];
   let newTodo = '';
   let nextId = 1;
+  let loaded = false;
+
+  // Load saved todos on mount
+  onMount(() => {
+    const data = loadTodos();
+    todos = data.todos;
+    nextId = data.nextId;
+    loaded = true;
+  });
+
+  // Auto-save todos whenever they change (after initial load)
+  $: if (loaded) {
+    saveTodos(todos, nextId);
+  }
 
   function addTodo() {
     if (newTodo.trim()) {

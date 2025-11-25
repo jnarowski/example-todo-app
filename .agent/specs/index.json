@@ -10,6 +10,17 @@
       "totalComplexity": 32,
       "phaseCount": 3,
       "taskCount": 8
+    },
+    "2511250757": {
+      "folder": "2511250757-localstorage-persistence",
+      "path": "todo/2511250757-localstorage-persistence/spec.md",
+      "spec_type": "feature",
+      "status": "review",
+      "created": "2025-11-25T13:57:00Z",
+      "updated": "2025-11-25T15:01:30Z",
+      "totalComplexity": 24,
+      "phaseCount": 3,
+      "taskCount": 7
     }
   }
 }
