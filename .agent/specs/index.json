@@ -10,6 +10,17 @@
       "totalComplexity": 32,
       "phaseCount": 3,
       "taskCount": 8
+    },
+    "2511250653": {
+      "folder": "2511250653-branch-mode",
+      "path": "todo/2511250653-branch-mode/spec.md",
+      "spec_type": "feature",
+      "status": "review",
+      "created": "2025-11-25T13:53:00Z",
+      "updated": "2025-11-25T14:05:00Z",
+      "totalComplexity": 67,
+      "phaseCount": 4,
+      "taskCount": 13
     }
   }
 }

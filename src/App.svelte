@@ -1,23 +1,65 @@
 <script>
+  import { onMount } from 'svelte';
+  import TodoList from './components/TodoList.svelte';
+  import { saveTodos, loadTodos } from './lib/todoStorage.js';
+  import { getAllDescendants, filterRootTodos } from './lib/todoTree.js';
+
   let todos = [];
   let newTodo = '';
   let nextId = 1;
+  let branchMode = false;
 
-  function addTodo() {
+  // Load todos from localStorage on mount
+  onMount(() => {
+    const loaded = loadTodos();
+    if (loaded.length > 0) {
+      todos = loaded;
+      // Update nextId to be one more than the highest ID
+      const maxId = Math.max(...loaded.map(t => t.id));
+      nextId = maxId + 1;
+    }
+  });
+
+  // Save todos to localStorage whenever they change
+  $: if (todos) {
+    saveTodos(todos);
+  }
+
+  function addTodo(parentId = null) {
     if (newTodo.trim()) {
-      todos = [...todos, { id: nextId++, text: newTodo, completed: false }];
+      todos = [...todos, { id: nextId++, text: newTodo, completed: false, parentId, expanded: true }];
       newTodo = '';
     }
   }
 
-  function toggleTodo(id) {
+  function addSubtask(event) {
+    const { parentId } = event.detail;
+    const text = prompt('Enter subtask:');
+    if (text && text.trim()) {
+      todos = [...todos, { id: nextId++, text: text.trim(), completed: false, parentId, expanded: true }];
+    }
+  }
+
+  function toggleTodo(event) {
+    const { id } = event.detail;
     todos = todos.map(todo =>
       todo.id === id ? { ...todo, completed: !todo.completed } : todo
     );
   }
 
-  function deleteTodo(id) {
-    todos = todos.filter(todo => todo.id !== id);
+  function toggleExpanded(event) {
+    const { id } = event.detail;
+    todos = todos.map(todo =>
+      todo.id === id ? { ...todo, expanded: !todo.expanded } : todo
+    );
+  }
+
+  function deleteTodo(event) {
+    const { id } = event.detail;
+    // Get all descendants to delete
+    const descendants = getAllDescendants(todos, id);
+    const idsToDelete = new Set([id, ...descendants.map(d => d.id)]);
+    todos = todos.filter(todo => !idsToDelete.has(todo.id));
   }
 
   function handleKeyPress(event) {
@@ -26,17 +68,32 @@
     }
   }
 
+  // Stats calculations
   $: activeTodos = todos.filter(todo => !todo.completed).length;
   $: completedTodos = todos.filter(todo => todo.completed).length;
+  $: totalTodos = todos.length;
+  $: rootTodos = filterRootTodos(todos).length;
 </script>
 
 <div class="todo-app">
   <div class="container">
     <h1>Todo App</h1>
 
+    <div class="branch-mode-toggle">
+      <label class="toggle-label">
+        <input type="checkbox" bind:checked={branchMode} />
+        <span class="toggle-text">Branch Mode</span>
+        <span class="toggle-help">Organize todos hierarchically</span>
+      </label>
+    </div>
+
     <div class="stats">
       <span class="stat">Active: {activeTodos}</span>
       <span class="stat">Completed: {completedTodos}</span>
+      {#if branchMode}
+        <span class="stat">Total: {totalTodos}</span>
+        <span class="stat">Root Items: {rootTodos}</span>
+      {/if}
     </div>
 
     <div class="input-section">
@@ -50,25 +107,35 @@
       <button on:click={addTodo} class="add-button">Add</button>
     </div>
 
-    <ul class="todo-list">
-      {#each todos as todo (todo.id)}
-        <li class="todo-item" class:completed={todo.completed}>
-          <input
-            type="checkbox"
-            checked={todo.completed}
-            on:change={() => toggleTodo(todo.id)}
-            id="todo-{todo.id}"
-          />
-          <label for="todo-{todo.id}" class="todo-text">{todo.text}</label>
-          <button on:click={() => deleteTodo(todo.id)} class="delete-button">
-            Delete
-          </button>
-        </li>
-      {/each}
-      {#if todos.length === 0}
-        <li class="empty-state">No todos yet. Add one above!</li>
-      {/if}
-    </ul>
+    {#if branchMode}
+      <TodoList
+        {todos}
+        on:toggle={toggleTodo}
+        on:delete={deleteTodo}
+        on:addSubtask={addSubtask}
+        on:toggleExpanded={toggleExpanded}
+      />
+    {:else}
+      <ul class="todo-list">
+        {#each todos as todo (todo.id)}
+          <li class="todo-item" class:completed={todo.completed}>
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              on:change={() => toggleTodo({ detail: { id: todo.id } })}
+              id="todo-{todo.id}"
+            />
+            <label for="todo-{todo.id}" class="todo-text">{todo.text}</label>
+            <button on:click={() => deleteTodo({ detail: { id: todo.id } })} class="delete-button">
+              Delete
+            </button>
+          </li>
+        {/each}
+        {#if todos.length === 0}
+          <li class="empty-state">No todos yet. Add one above!</li>
+        {/if}
+      </ul>
+    {/if}
   </div>
 </div>
 
@@ -87,8 +154,48 @@
   h1 {
     font-size: 36px;
     color: #333;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     text-align: center;
+  }
+
+  .branch-mode-toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 24px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .toggle-label:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  .toggle-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  .toggle-text {
+    font-weight: 600;
+    color: white;
+    font-size: 16px;
+  }
+
+  .toggle-help {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
   }
 
   .stats {
