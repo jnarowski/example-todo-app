@@ -284,3 +284,121 @@ Following Svelte's reactivity model, all state updates use immutable patterns (m
 3. Implement Phase 3: Add visual styling and polish
 4. Run build and manual testing per Validation section
 5. Consider future enhancement: Filter view to show only flagged tasks
+
+## Review Findings
+
+**Review Date:** 2025-11-25
+**Reviewed By:** Claude Code
+**Review Iteration:** 1 of 3
+**Branch:** feature/flag-a-task
+**Commits Reviewed:** 1
+
+### Summary
+
+The implementation is largely complete with all core requirements met. One medium-priority issue was identified regarding the visual interaction between completed and flagged states that could affect the visibility of flagged tasks when they're marked as completed.
+
+### Phase 1: Data Model
+
+**Status:** ✅ Complete - All requirements fully implemented
+
+- ✅ `flagged` property added to todo data model (`src/App.svelte:8`)
+- ✅ `toggleFlag()` function implemented correctly (`src/App.svelte:19-23`)
+
+### Phase 2: UI Components
+
+**Status:** ✅ Complete - All requirements fully implemented
+
+- ✅ Reactive stat for flagged todos count added (`src/App.svelte:37`)
+- ✅ Flagged stat displayed in stats section (`src/App.svelte:47`)
+- ✅ Star button added to todo items with proper conditional rendering (`src/App.svelte:70`)
+
+### Phase 3: Visual Polish
+
+**Status:** ⚠️ Incomplete - One visual polish issue identified
+
+#### MEDIUM Priority
+
+- [ ] **Flagged tasks lose visibility when completed**
+  - **File:** `src/App.svelte:178-180`
+  - **Spec Reference:** "Flagged tasks are visually distinguished with a highlighted background" (Success Criteria) and "Add visual distinction for flagged tasks" (Task 3.2)
+  - **Expected:** Flagged tasks should maintain clear visual distinction even when completed, allowing users to identify important completed tasks
+  - **Actual:** The `.todo-item.completed` rule applies `opacity: 0.6` which dims the flagged background color (#fffbea) and orange border, making flagged completed tasks harder to distinguish
+  - **Fix:** Add a more specific CSS rule that preserves the flagged visual distinction for completed items, such as:
+    ```css
+    .todo-item.completed.flagged {
+      opacity: 1;
+      background: #fef3c7; /* Slightly darker yellow to account for strikethrough text */
+    }
+    ```
+    This ensures flagged tasks remain visually prominent even when completed, fulfilling the user story of helping "quickly identify and focus on high-priority items."
+
+### Positive Findings
+
+- Clean implementation following existing Svelte patterns
+- Proper use of immutable state updates for reactivity
+- Good accessibility with title attributes on flag button
+- Consistent code style with the rest of the application
+- Build succeeds with no errors or warnings
+- All core functionality (toggle flag, display count, visual styling) working as specified
+
+### Review Completion Checklist
+
+- [x] All spec requirements reviewed
+- [x] Code quality checked
+- [ ] All findings addressed and tested
+
+## Review Findings (#2)
+
+**Review Date:** 2025-11-25
+**Reviewed By:** Claude Code
+**Review Iteration:** 2 of 3
+**Branch:** feature/flag-a-task
+**Commits Reviewed:** 1
+
+### Summary
+
+The previous issue identified in iteration 1 remains unresolved. The implementation is complete in terms of core functionality, but the visual polish phase still has one outstanding medium-priority issue affecting the visibility of flagged completed tasks.
+
+### Phase 1: Data Model
+
+**Status:** ✅ Complete - All requirements fully implemented
+
+- No new issues found
+
+### Phase 2: UI Components
+
+**Status:** ✅ Complete - All requirements fully implemented
+
+- No new issues found
+
+### Phase 3: Visual Polish
+
+**Status:** ⚠️ Incomplete - Previous issue not addressed
+
+#### MEDIUM Priority
+
+- [ ] **Flagged tasks lose visibility when completed** (Carried forward from iteration 1)
+  - **File:** `src/App.svelte:178-180`
+  - **Spec Reference:** "Flagged tasks are visually distinguished with a highlighted background" (Success Criteria) and "Add visual distinction for flagged tasks" (Task 3.2)
+  - **Expected:** Flagged tasks should maintain clear visual distinction even when completed, allowing users to identify important completed tasks
+  - **Actual:** The `.todo-item.completed` rule applies `opacity: 0.6` which dims the flagged background color (#fffbea) and orange border, making flagged completed tasks harder to distinguish
+  - **Fix:** Add a more specific CSS rule that preserves the flagged visual distinction for completed items. Add after line 185:
+    ```css
+    .todo-item.completed.flagged {
+      opacity: 1;
+      background: #fef3c7; /* Slightly darker yellow to account for strikethrough text */
+    }
+    ```
+    This ensures flagged tasks remain visually prominent even when completed, fulfilling the user story of helping "quickly identify and focus on high-priority items."
+
+### Positive Findings
+
+- All core functionality continues to work correctly
+- Build succeeds with no errors
+- Code quality remains consistent with project standards
+
+### Review Completion Checklist
+
+- [x] All spec requirements reviewed
+- [x] Code quality checked
+- [ ] Previous findings addressed and tested
