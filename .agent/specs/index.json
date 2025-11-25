@@ -24,11 +24,11 @@
     },
     "2511251104": {
       "folder": "2511251104-prisma-integration",
-      "path": "todo/2511251104-prisma-integration/spec.md",
+      "path": "done/2511251104-prisma-integration/spec.md",
       "spec_type": "feature",
-      "status": "review",
+      "status": "completed",
       "created": "2025-11-25T11:04:00Z",
-      "updated": "2025-11-25T18:50:00Z",
+      "updated": "2025-11-25T19:00:00Z",
       "totalComplexity": 52,
       "phaseCount": 4,
       "taskCount": 11
