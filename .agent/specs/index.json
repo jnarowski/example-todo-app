@@ -10,6 +10,17 @@
       "totalComplexity": 38,
       "phaseCount": 3,
       "taskCount": 8
+    },
+    "2511250614": {
+      "folder": "2511250614-task-flag",
+      "path": "done/2511250614-task-flag/spec.md",
+      "spec_type": "feature",
+      "status": "completed",
+      "created": "2025-11-25T06:14:00Z",
+      "updated": "2025-11-25T13:18:00Z",
+      "totalComplexity": 26,
+      "phaseCount": 3,
+      "taskCount": 7
     }
   }
 }
