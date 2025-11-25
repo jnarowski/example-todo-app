@@ -1,23 +1,72 @@
 <script>
+  import { onMount } from 'svelte';
+  import * as api from './lib/api.js';
+
   let todos = [];
   let newTodo = '';
-  let nextId = 1;
+  let isLoading = false;
+  let error = null;
 
-  function addTodo() {
-    if (newTodo.trim()) {
-      todos = [...todos, { id: nextId++, text: newTodo, completed: false }];
-      newTodo = '';
+  onMount(async () => {
+    await loadTodos();
+  });
+
+  async function loadTodos() {
+    isLoading = true;
+    error = null;
+    try {
+      todos = await api.fetchTodos();
+    } catch (err) {
+      error = 'Failed to load todos. Please try again.';
+      console.error(err);
+    } finally {
+      isLoading = false;
     }
   }
 
-  function toggleTodo(id) {
-    todos = todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    );
+  async function addTodo() {
+    if (newTodo.trim()) {
+      isLoading = true;
+      error = null;
+      try {
+        await api.createTodo(newTodo);
+        newTodo = '';
+        await loadTodos();
+      } catch (err) {
+        error = 'Failed to add todo. Please try again.';
+        console.error(err);
+      } finally {
+        isLoading = false;
+      }
+    }
   }
 
-  function deleteTodo(id) {
-    todos = todos.filter(todo => todo.id !== id);
+  async function toggleTodo(id, completed) {
+    isLoading = true;
+    error = null;
+    try {
+      await api.updateTodo(id, { completed: !completed });
+      await loadTodos();
+    } catch (err) {
+      error = 'Failed to update todo. Please try again.';
+      console.error(err);
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  async function deleteTodo(id) {
+    isLoading = true;
+    error = null;
+    try {
+      await api.deleteTodo(id);
+      await loadTodos();
+    } catch (err) {
+      error = 'Failed to delete todo. Please try again.';
+      console.error(err);
+    } finally {
+      isLoading = false;
+    }
   }
 
   function handleKeyPress(event) {
@@ -34,6 +83,13 @@
   <div class="container">
     <h1>Todo App</h1>
 
+    {#if error}
+      <div class="error-message">
+        {error}
+        <button on:click={loadTodos} class="retry-button">Retry</button>
+      </div>
+    {/if}
+
     <div class="stats">
       <span class="stat">Active: {activeTodos}</span>
       <span class="stat">Completed: {completedTodos}</span>
@@ -46,26 +102,34 @@
         on:keypress={handleKeyPress}
         placeholder="What needs to be done?"
         class="todo-input"
+        disabled={isLoading}
       />
-      <button on:click={addTodo} class="add-button">Add</button>
+      <button on:click={addTodo} class="add-button" disabled={isLoading}>
+        {isLoading ? 'Loading...' : 'Add'}
+      </button>
     </div>
+
+    {#if isLoading && todos.length === 0}
+      <div class="loading">Loading todos...</div>
+    {/if}
 
     <ul class="todo-list">
       {#each todos as todo (todo.id)}
-        <li class="todo-item" class:completed={todo.completed}>
+        <li class="todo-item" class:completed={todo.completed} class:loading={isLoading}>
           <input
             type="checkbox"
             checked={todo.completed}
-            on:change={() => toggleTodo(todo.id)}
+            on:change={() => toggleTodo(todo.id, todo.completed)}
             id="todo-{todo.id}"
+            disabled={isLoading}
           />
           <label for="todo-{todo.id}" class="todo-text">{todo.text}</label>
-          <button on:click={() => deleteTodo(todo.id)} class="delete-button">
+          <button on:click={() => deleteTodo(todo.id)} class="delete-button" disabled={isLoading}>
             Delete
           </button>
         </li>
       {/each}
-      {#if todos.length === 0}
+      {#if todos.length === 0 && !isLoading}
         <li class="empty-state">No todos yet. Add one above!</li>
       {/if}
     </ul>
@@ -208,5 +272,52 @@
     padding: 32px;
     color: #999;
     font-style: italic;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 32px;
+    color: #667eea;
+    font-size: 16px;
+  }
+
+  .error-message {
+    background: #fee;
+    border: 1px solid #fcc;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    color: #c00;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .retry-button {
+    padding: 6px 12px;
+    font-size: 14px;
+    color: white;
+    background: #e74c3c;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .retry-button:hover {
+    background: #c0392b;
+  }
+
+  .todo-item.loading {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .add-button:disabled,
+  .delete-button:disabled,
+  .todo-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 </style>
