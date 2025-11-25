@@ -21,6 +21,17 @@
       "totalComplexity": 18,
       "phaseCount": 3,
       "taskCount": 7
+    },
+    "2511250905": {
+      "folder": "2511250905-add-vitest",
+      "path": "todo/2511250905-add-vitest/spec.md",
+      "spec_type": "issue",
+      "status": "review",
+      "created": "2025-11-25T09:05:00Z",
+      "updated": "2025-11-25T13:35:00Z",
+      "totalComplexity": 21,
+      "phaseCount": 1,
+      "taskCount": 6
     }
   }
 }
