@@ -21,6 +21,17 @@
       "totalComplexity": 54,
       "phaseCount": 4,
       "taskCount": 11
+    },
+    "2511251220": {
+      "folder": "2511251220-mysql-migration",
+      "path": "done/2511251220-mysql-migration/spec.md",
+      "spec_type": "feature",
+      "status": "completed",
+      "created": "2025-11-25T12:20:00Z",
+      "updated": "2025-11-25T19:23:30Z",
+      "totalComplexity": 43,
+      "phaseCount": 3,
+      "taskCount": 9
     }
   }
 }
