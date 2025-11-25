@@ -13,11 +13,11 @@
     },
     "2511250653": {
       "folder": "2511250653-branch-mode",
-      "path": "todo/2511250653-branch-mode/spec.md",
+      "path": "done/2511250653-branch-mode/spec.md",
       "spec_type": "feature",
       "status": "completed",
       "created": "2025-11-25T13:53:00Z",
-      "updated": "2025-11-25T19:30:00Z",
+      "updated": "2025-11-26T01:53:00Z",
       "totalComplexity": 67,
       "phaseCount": 4,
       "taskCount": 13
