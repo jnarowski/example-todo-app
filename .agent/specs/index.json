@@ -24,11 +24,11 @@
     },
     "2511250905": {
       "folder": "2511250905-add-vitest",
-      "path": "todo/2511250905-add-vitest/spec.md",
+      "path": "done/2511250905-add-vitest/spec.md",
       "spec_type": "issue",
       "status": "completed",
       "created": "2025-11-25T09:05:00Z",
-      "updated": "2025-11-25T09:10:35Z",
+      "updated": "2025-11-25T22:15:00Z",
       "totalComplexity": 21,
       "phaseCount": 1,
       "taskCount": 6
