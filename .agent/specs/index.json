@@ -10,6 +10,17 @@
       "totalComplexity": 32,
       "phaseCount": 3,
       "taskCount": 8
+    },
+    "2511251509": {
+      "folder": "2511251509-flag-task",
+      "path": "todo/2511251509-flag-task/spec.md",
+      "spec_type": "feature",
+      "status": "review",
+      "created": "2025-11-25T15:09:00Z",
+      "updated": "2025-11-25T15:13:30Z",
+      "totalComplexity": 18,
+      "phaseCount": 3,
+      "taskCount": 7
     }
   }
 }
