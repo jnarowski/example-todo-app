@@ -1,29 +1,112 @@
 <script>
+  import { onMount } from 'svelte';
+  import { fetchTodos, createTodo, updateTodo, deleteTodo as deleteTodoAPI } from './lib/api.js';
+
   let todos = [];
   let newTodo = '';
-  let nextId = 1;
+  let isLoading = false;
+  let error = null;
+  let successMessage = null;
 
-  function addTodo() {
-    if (newTodo.trim()) {
-      todos = [...todos, { id: nextId++, text: newTodo, completed: false }];
-      newTodo = '';
+  // Load todos on component mount
+  onMount(async () => {
+    await loadTodos();
+  });
+
+  async function loadTodos() {
+    isLoading = true;
+    error = null;
+    try {
+      todos = await fetchTodos();
+    } catch (err) {
+      error = `Failed to load todos: ${err.message}`;
+      console.error('Error loading todos:', err);
+    } finally {
+      isLoading = false;
     }
   }
 
-  function toggleTodo(id) {
-    todos = todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    );
+  async function addTodo() {
+    if (!newTodo.trim()) {
+      return;
+    }
+
+    const text = newTodo.trim();
+    newTodo = '';
+    isLoading = true;
+    error = null;
+
+    try {
+      const todo = await createTodo(text);
+      todos = [todo, ...todos];
+      showSuccess('Todo added successfully');
+    } catch (err) {
+      error = `Failed to add todo: ${err.message}`;
+      console.error('Error adding todo:', err);
+      newTodo = text; // Restore input on error
+    } finally {
+      isLoading = false;
+    }
   }
 
-  function deleteTodo(id) {
-    todos = todos.filter(todo => todo.id !== id);
+  async function toggleTodo(id) {
+    const todo = todos.find(t => t.id === id);
+    if (!todo) return;
+
+    // Optimistic update
+    todos = todos.map(t =>
+      t.id === id ? { ...t, completed: !t.completed } : t
+    );
+
+    try {
+      await updateTodo(id, { completed: !todo.completed });
+    } catch (err) {
+      error = `Failed to update todo: ${err.message}`;
+      console.error('Error updating todo:', err);
+      // Revert optimistic update
+      todos = todos.map(t =>
+        t.id === id ? { ...t, completed: todo.completed } : t
+      );
+    }
+  }
+
+  async function handleDeleteTodo(id) {
+    const todo = todos.find(t => t.id === id);
+    if (!todo) return;
+
+    // Optimistic update
+    todos = todos.filter(t => t.id !== id);
+
+    try {
+      await deleteTodoAPI(id);
+      showSuccess('Todo deleted successfully');
+    } catch (err) {
+      error = `Failed to delete todo: ${err.message}`;
+      console.error('Error deleting todo:', err);
+      // Revert optimistic update
+      todos = [...todos, todo].sort((a, b) => b.id - a.id);
+    }
   }
 
   function handleKeyPress(event) {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && !isLoading) {
       addTodo();
     }
+  }
+
+  function showSuccess(message) {
+    successMessage = message;
+    setTimeout(() => {
+      successMessage = null;
+    }, 3000);
+  }
+
+  function dismissError() {
+    error = null;
+  }
+
+  async function retryLoad() {
+    await loadTodos();
   }
 
   $: activeTodos = todos.filter(todo => !todo.completed).length;
@@ -33,6 +116,22 @@
 <div class="todo-app">
   <div class="container">
     <h1>Todo App</h1>
+
+    {#if error}
+      <div class="notification error">
+        <span>{error}</span>
+        <div class="notification-actions">
+          <button on:click={retryLoad} class="retry-button">Retry</button>
+          <button on:click={dismissError} class="dismiss-button">×</button>
+        </div>
+      </div>
+    {/if}
+
+    {#if successMessage}
+      <div class="notification success">
+        <span>{successMessage}</span>
+      </div>
+    {/if}
 
     <div class="stats">
       <span class="stat">Active: {activeTodos}</span>
@@ -46,29 +145,44 @@
         on:keypress={handleKeyPress}
         placeholder="What needs to be done?"
         class="todo-input"
+        disabled={isLoading}
       />
-      <button on:click={addTodo} class="add-button">Add</button>
+      <button on:click={addTodo} class="add-button" disabled={isLoading}>
+        {isLoading ? 'Loading...' : 'Add'}
+      </button>
     </div>
 
-    <ul class="todo-list">
-      {#each todos as todo (todo.id)}
-        <li class="todo-item" class:completed={todo.completed}>
-          <input
-            type="checkbox"
-            checked={todo.completed}
-            on:change={() => toggleTodo(todo.id)}
-            id="todo-{todo.id}"
-          />
-          <label for="todo-{todo.id}" class="todo-text">{todo.text}</label>
-          <button on:click={() => deleteTodo(todo.id)} class="delete-button">
-            Delete
-          </button>
-        </li>
-      {/each}
-      {#if todos.length === 0}
-        <li class="empty-state">No todos yet. Add one above!</li>
-      {/if}
-    </ul>
+    {#if isLoading && todos.length === 0}
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading todos...</p>
+      </div>
+    {:else}
+      <ul class="todo-list">
+        {#each todos as todo (todo.id)}
+          <li class="todo-item" class:completed={todo.completed}>
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              on:change={() => toggleTodo(todo.id)}
+              id="todo-{todo.id}"
+              disabled={isLoading}
+            />
+            <label for="todo-{todo.id}" class="todo-text">{todo.text}</label>
+            <button
+              on:click={() => handleDeleteTodo(todo.id)}
+              class="delete-button"
+              disabled={isLoading}
+            >
+              Delete
+            </button>
+          </li>
+        {/each}
+        {#if todos.length === 0}
+          <li class="empty-state">No todos yet. Add one above!</li>
+        {/if}
+      </ul>
+    {/if}
   </div>
 </div>
 
@@ -208,5 +322,108 @@
     padding: 32px;
     color: #999;
     font-style: italic;
+  }
+
+  .notification {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .notification.error {
+    background: #fee;
+    color: #c00;
+    border: 1px solid #fcc;
+  }
+
+  .notification.success {
+    background: #efe;
+    color: #0a0;
+    border: 1px solid #cfc;
+  }
+
+  .notification-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .retry-button {
+    padding: 6px 12px;
+    font-size: 12px;
+    color: white;
+    background: #667eea;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .retry-button:hover {
+    background: #5568d3;
+  }
+
+  .dismiss-button {
+    padding: 6px 12px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #999;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .dismiss-button:hover {
+    color: #333;
+  }
+
+  .loading-spinner {
+    text-align: center;
+    padding: 48px;
+  }
+
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  .loading-spinner p {
+    color: #999;
+    font-size: 14px;
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 </style>
