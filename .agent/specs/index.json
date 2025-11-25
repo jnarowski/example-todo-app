@@ -21,6 +21,17 @@
       "totalComplexity": 18,
       "phaseCount": 3,
       "taskCount": 7
+    },
+    "2511251551": {
+      "folder": "2511251551-prisma-integration",
+      "path": "done/2511251551-prisma-integration/spec.md",
+      "spec_type": "feature",
+      "status": "completed",
+      "created": "2025-11-25T15:51:00Z",
+      "updated": "2025-11-25T23:58:09Z",
+      "totalComplexity": 68,
+      "phaseCount": 5,
+      "taskCount": 14
     }
   }
 }
