@@ -10,6 +10,17 @@
       "totalComplexity": 32,
       "phaseCount": 3,
       "taskCount": 8
+    },
+    "202511251047": {
+      "folder": "202511251047-prisma-database",
+      "path": "done/202511251047-prisma-database/spec.md",
+      "spec_type": "feature",
+      "status": "completed",
+      "created": "2025-11-25T10:47:00Z",
+      "updated": "2025-11-25T17:58:30Z",
+      "totalComplexity": 54,
+      "phaseCount": 4,
+      "taskCount": 11
     }
   }
 }
