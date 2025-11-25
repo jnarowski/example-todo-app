@@ -10,6 +10,17 @@
       "totalComplexity": 38,
       "phaseCount": 3,
       "taskCount": 8
+    },
+    "2511251209": {
+      "folder": "2511251209-abc-sorting",
+      "path": "done/2511251209-abc-sorting/spec.md",
+      "spec_type": "feature",
+      "status": "completed",
+      "created": "2025-11-25T12:09:00Z",
+      "updated": "2025-11-25T18:00:00Z",
+      "totalComplexity": 27,
+      "phaseCount": 3,
+      "taskCount": 6
     }
   }
 }
