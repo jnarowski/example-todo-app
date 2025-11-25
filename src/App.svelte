@@ -1,23 +1,69 @@
 <script>
+  import { onMount } from 'svelte';
+  import * as api from './lib/api.js';
+
   let todos = [];
   let newTodo = '';
-  let nextId = 1;
+  let loading = false;
+  let error = null;
 
-  function addTodo() {
-    if (newTodo.trim()) {
-      todos = [...todos, { id: nextId++, text: newTodo, completed: false }];
-      newTodo = '';
+  onMount(async () => {
+    await loadTodos();
+  });
+
+  async function loadTodos() {
+    try {
+      loading = true;
+      error = null;
+      todos = await api.getTodos();
+    } catch (err) {
+      error = 'Failed to load todos. Please try again.';
+      console.error('Error loading todos:', err);
+    } finally {
+      loading = false;
     }
   }
 
-  function toggleTodo(id) {
-    todos = todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    );
+  async function addTodo() {
+    if (newTodo.trim()) {
+      try {
+        loading = true;
+        error = null;
+        const todo = await api.createTodo(newTodo.trim());
+        todos = [todo, ...todos];
+        newTodo = '';
+      } catch (err) {
+        error = 'Failed to add todo. Please try again.';
+        console.error('Error adding todo:', err);
+      } finally {
+        loading = false;
+      }
+    }
   }
 
-  function deleteTodo(id) {
-    todos = todos.filter(todo => todo.id !== id);
+  async function toggleTodo(id) {
+    const todo = todos.find(t => t.id === id);
+    if (!todo) return;
+
+    try {
+      error = null;
+      const updated = await api.updateTodo(id, { completed: !todo.completed });
+      todos = todos.map(t => t.id === id ? updated : t);
+    } catch (err) {
+      error = 'Failed to update todo. Please try again.';
+      console.error('Error updating todo:', err);
+    }
+  }
+
+  async function deleteTodo(id) {
+    try {
+      error = null;
+      await api.deleteTodo(id);
+      todos = todos.filter(todo => todo.id !== id);
+    } catch (err) {
+      error = 'Failed to delete todo. Please try again.';
+      console.error('Error deleting todo:', err);
+    }
   }
 
   function handleKeyPress(event) {
@@ -34,6 +80,10 @@
   <div class="container">
     <h1>Todo App</h1>
 
+    {#if error}
+      <div class="error-message">{error}</div>
+    {/if}
+
     <div class="stats">
       <span class="stat">Active: {activeTodos}</span>
       <span class="stat">Completed: {completedTodos}</span>
@@ -46,9 +96,16 @@
         on:keypress={handleKeyPress}
         placeholder="What needs to be done?"
         class="todo-input"
+        disabled={loading}
       />
-      <button on:click={addTodo} class="add-button">Add</button>
+      <button on:click={addTodo} class="add-button" disabled={loading}>
+        {loading ? 'Loading...' : 'Add'}
+      </button>
     </div>
+
+    {#if loading && todos.length === 0}
+      <div class="loading-state">Loading todos...</div>
+    {/if}
 
     <ul class="todo-list">
       {#each todos as todo (todo.id)}
@@ -65,7 +122,7 @@
           </button>
         </li>
       {/each}
-      {#if todos.length === 0}
+      {#if !loading && todos.length === 0}
         <li class="empty-state">No todos yet. Add one above!</li>
       {/if}
     </ul>
@@ -208,5 +265,31 @@
     padding: 32px;
     color: #999;
     font-style: italic;
+  }
+
+  .loading-state {
+    text-align: center;
+    padding: 32px;
+    color: #667eea;
+    font-weight: 600;
+  }
+
+  .error-message {
+    background: #fee;
+    color: #c33;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #fcc;
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 </style>
