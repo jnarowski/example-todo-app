@@ -26,9 +26,9 @@
       "folder": "2511251030-add-vitest",
       "path": "todo/2511251030-add-vitest/spec.md",
       "spec_type": "feature",
-      "status": "review",
+      "status": "completed",
       "created": "2025-11-25T10:30:29Z",
-      "updated": "2025-11-25T10:40:10Z",
+      "updated": "2025-11-25T22:42:00Z",
       "totalComplexity": 42,
       "phaseCount": 4,
       "taskCount": 11
