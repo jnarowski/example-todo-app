@@ -26,9 +26,9 @@
       "folder": "2511251210-postgres-prisma-migration",
       "path": "todo/2511251210-postgres-prisma-migration/spec.md",
       "spec_type": "feature",
-      "status": "completed",
+      "status": "review",
       "created": "2025-11-25T12:10:00Z",
-      "updated": "2025-11-25T19:36:30Z",
+      "updated": "2025-11-25T19:39:05Z",
       "totalComplexity": 62,
       "phaseCount": 4,
       "taskCount": 12
