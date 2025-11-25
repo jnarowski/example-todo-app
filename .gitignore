@@ -33,3 +33,7 @@ pnpm-debug.log*
 # Cache
 .cache/
 .vite/
+
+# Test coverage
+coverage/
+.vitest/
