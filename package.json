@@ -12,16 +12,16 @@
     "studio": "npx prisma studio"
   },
   "devDependencies": {
-    "@prisma/client": "^7.0.1",
     "@sveltejs/vite-plugin-svelte": "^3.0.1",
     "agentcmd-workflows": "^1.1.12",
     "dotenv": "^17.2.3",
-    "prisma": "^7.0.1",
     "svelte": "^4.2.8",
     "vite": "^5.0.10"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "cors": "^2.8.5",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "prisma": "^5.22.0"
   }
 }
