@@ -1,6 +1,6 @@
 # Add Docker Compose to Development Environment
 
-**Status**: review
+**Status**: completed
 **Type**: issue
 **Created**: 2025-11-26
 **Package**: example-todo-app

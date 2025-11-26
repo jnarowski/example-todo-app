@@ -13,11 +13,11 @@
     },
     "2511260953": {
       "folder": "2511260953-docker-compose-dev",
-      "path": "todo/2511260953-docker-compose-dev/spec.md",
+      "path": "done/2511260953-docker-compose-dev/spec.md",
       "spec_type": "issue",
-      "status": "review",
+      "status": "completed",
       "created": "2025-11-26T09:53:00Z",
-      "updated": "2025-11-26T18:15:00Z",
+      "updated": "2025-11-26T17:00:21Z",
       "totalComplexity": 18,
       "phaseCount": 1,
       "taskCount": 5
