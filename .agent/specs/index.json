@@ -13,11 +13,11 @@
     },
     "2511262252": {
       "folder": "2511262252-claude-md-file",
-      "path": "todo/2511262252-claude-md-file/spec.md",
+      "path": "done/2511262252-claude-md-file/spec.md",
       "spec_type": "feature",
-      "status": "review",
+      "status": "completed",
       "created": "2025-11-26T22:52:00Z",
-      "updated": "2025-11-26T22:56:00Z",
+      "updated": "2025-11-26T23:00:00Z",
       "totalComplexity": 12,
       "phaseCount": 2,
       "taskCount": 4
