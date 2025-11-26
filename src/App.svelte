@@ -5,7 +5,7 @@
 
   function addTodo() {
     if (newTodo.trim()) {
-      todos = [...todos, { id: nextId++, text: newTodo, completed: false }];
+      todos = [...todos, { id: nextId++, text: newTodo, completed: false, flagged: false }];
       newTodo = '';
     }
   }
@@ -13,6 +13,12 @@
   function toggleTodo(id) {
     todos = todos.map(todo =>
       todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    );
+  }
+
+  function toggleFlag(id) {
+    todos = todos.map(todo =>
+      todo.id === id ? { ...todo, flagged: !todo.flagged } : todo
     );
   }
 
@@ -28,6 +34,7 @@
 
   $: activeTodos = todos.filter(todo => !todo.completed).length;
   $: completedTodos = todos.filter(todo => todo.completed).length;
+  $: flaggedTodos = todos.filter(todo => todo.flagged).length;
 </script>
 
 <div class="todo-app">
@@ -37,6 +44,7 @@
     <div class="stats">
       <span class="stat">Active: {activeTodos}</span>
       <span class="stat">Completed: {completedTodos}</span>
+      <span class="stat">Flagged: {flaggedTodos}</span>
     </div>
 
     <div class="input-section">
@@ -52,13 +60,16 @@
 
     <ul class="todo-list">
       {#each todos as todo (todo.id)}
-        <li class="todo-item" class:completed={todo.completed}>
+        <li class="todo-item" class:completed={todo.completed} class:flagged={todo.flagged}>
           <input
             type="checkbox"
             checked={todo.completed}
             on:change={() => toggleTodo(todo.id)}
             id="todo-{todo.id}"
           />
+          <button on:click={() => toggleFlag(todo.id)} class="flag-button" title={todo.flagged ? 'Unflag' : 'Flag as important'}>
+            {todo.flagged ? '★' : '☆'}
+          </button>
           <label for="todo-{todo.id}" class="todo-text">{todo.text}</label>
           <button on:click={() => deleteTodo(todo.id)} class="delete-button">
             Delete
@@ -208,5 +219,35 @@
     padding: 32px;
     color: #999;
     font-style: italic;
+  }
+
+  .flag-button {
+    padding: 4px 8px;
+    font-size: 18px;
+    color: #999;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    line-height: 1;
+  }
+
+  .flag-button:hover {
+    background: #f0f0f0;
+    transform: scale(1.1);
+  }
+
+  .todo-item.flagged .flag-button {
+    color: #f39c12;
+  }
+
+  .todo-item.flagged {
+    background: #fff9e6;
+    border-left: 3px solid #f39c12;
+  }
+
+  .todo-item.flagged:hover {
+    background: #fff3d4;
   }
 </style>

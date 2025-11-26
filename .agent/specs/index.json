@@ -10,6 +10,17 @@
       "totalComplexity": 32,
       "phaseCount": 3,
       "taskCount": 8
+    },
+    "2511261317": {
+      "folder": "2511261317-todo-flagging",
+      "path": "todo/2511261317-todo-flagging/spec.md",
+      "spec_type": "feature",
+      "status": "review",
+      "created": "2025-11-26T13:17:00Z",
+      "updated": "2025-11-26T20:25:00Z",
+      "totalComplexity": 23,
+      "phaseCount": 3,
+      "taskCount": 7
     }
   }
 }
