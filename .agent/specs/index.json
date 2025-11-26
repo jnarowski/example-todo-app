@@ -10,6 +10,28 @@
       "totalComplexity": 32,
       "phaseCount": 3,
       "taskCount": 8
+    },
+    "2511261255": {
+      "folder": "2511261255-offline-mode",
+      "path": "todo/2511261255-offline-mode/spec.md",
+      "spec_type": "feature",
+      "status": "review",
+      "created": "2025-11-26T12:55:00Z",
+      "updated": "2025-11-26T20:02:45Z",
+      "totalComplexity": 47,
+      "phaseCount": 4,
+      "taskCount": 10
+    },
+    "202511261259": {
+      "folder": "202511261259-update-claude-md",
+      "path": "todo/202511261259-update-claude-md/spec.md",
+      "spec_type": "feature",
+      "status": "in-progress",
+      "created": "2025-11-26T12:59:00Z",
+      "updated": "2025-11-26T19:57:00Z",
+      "totalComplexity": 18,
+      "phaseCount": 2,
+      "taskCount": 5
     }
   }
 }

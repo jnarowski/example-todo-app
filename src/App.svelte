@@ -1,7 +1,60 @@
 <script>
+  import { onMount, onDestroy } from 'svelte';
+  import { loadTodos, saveTodos, loadNextId, saveNextId } from './lib/storage.js';
+  import {
+    initConnectionMonitor,
+    cleanupConnectionMonitor,
+    isOnline,
+    syncTodos,
+    autoSync
+  } from './lib/sync.js';
+  import ConnectionStatus from './components/ConnectionStatus.svelte';
+
   let todos = [];
   let newTodo = '';
   let nextId = 1;
+  let online = true;
+
+  // Subscribe to connection status
+  const unsubscribe = isOnline.subscribe(value => {
+    const wasOffline = !online;
+    online = value;
+
+    // Auto-sync when coming back online
+    if (wasOffline && value && todos.length > 0) {
+      autoSync(todos);
+    }
+  });
+
+  // Load todos and nextId from localStorage on mount
+  onMount(() => {
+    todos = loadTodos();
+    nextId = loadNextId();
+
+    // Initialize connection monitoring
+    initConnectionMonitor();
+
+    // Initial sync if online
+    if (navigator.onLine && todos.length > 0) {
+      syncTodos(todos);
+    }
+  });
+
+  // Cleanup on destroy
+  onDestroy(() => {
+    cleanupConnectionMonitor();
+    unsubscribe();
+  });
+
+  // Save todos to localStorage whenever they change
+  $: if (todos) {
+    saveTodos(todos);
+  }
+
+  // Save nextId to localStorage whenever it changes
+  $: if (nextId > 1) {
+    saveNextId(nextId);
+  }
 
   function addTodo() {
     if (newTodo.trim()) {
@@ -71,6 +124,8 @@
     </ul>
   </div>
 </div>
+
+<ConnectionStatus />
 
 <style>
   .todo-app {
