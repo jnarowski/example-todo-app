@@ -1,23 +1,23 @@
 <script>
-  let todos = [];
+  import { todoStore } from './lib/stores/todoStore.js';
+  import { isOnline, syncStatus } from './lib/utils/offline.js';
+  import { notification } from './lib/stores/notificationStore.js';
+
   let newTodo = '';
-  let nextId = 1;
 
   function addTodo() {
     if (newTodo.trim()) {
-      todos = [...todos, { id: nextId++, text: newTodo, completed: false }];
+      todoStore.add(newTodo);
       newTodo = '';
     }
   }
 
   function toggleTodo(id) {
-    todos = todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    );
+    todoStore.toggle(id);
   }
 
   function deleteTodo(id) {
-    todos = todos.filter(todo => todo.id !== id);
+    todoStore.remove(id);
   }
 
   function handleKeyPress(event) {
@@ -26,12 +26,33 @@
     }
   }
 
-  $: activeTodos = todos.filter(todo => !todo.completed).length;
-  $: completedTodos = todos.filter(todo => todo.completed).length;
+  $: activeTodos = $todoStore.filter(todo => !todo.completed).length;
+  $: completedTodos = $todoStore.filter(todo => todo.completed).length;
 </script>
 
 <div class="todo-app">
+  {#if $notification}
+    <div class="notification notification-{$notification.type}">
+      <span>{$notification.message}</span>
+      <button class="notification-close" on:click={() => notification.clear()}>×</button>
+    </div>
+  {/if}
+
   <div class="container">
+    <div class="status-indicator" class:online={$isOnline} class:offline={!$isOnline}>
+      <span class="status-dot"></span>
+      <span class="status-text">
+        {$isOnline ? 'Online' : 'Offline'}
+        {#if $syncStatus === 'syncing'}
+          - Syncing...
+        {:else if $syncStatus === 'synced'}
+          - Synced ✓
+        {:else if $syncStatus === 'error'}
+          - Error
+        {/if}
+      </span>
+    </div>
+
     <h1>Todo App</h1>
 
     <div class="stats">
@@ -51,7 +72,7 @@
     </div>
 
     <ul class="todo-list">
-      {#each todos as todo (todo.id)}
+      {#each $todoStore as todo (todo.id)}
         <li class="todo-item" class:completed={todo.completed}>
           <input
             type="checkbox"
@@ -65,7 +86,7 @@
           </button>
         </li>
       {/each}
-      {#if todos.length === 0}
+      {#if $todoStore.length === 0}
         <li class="empty-state">No todos yet. Add one above!</li>
       {/if}
     </ul>
@@ -82,6 +103,123 @@
     border-radius: 12px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     padding: 32px;
+    position: relative;
+  }
+
+  .status-indicator {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .status-indicator.online {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .status-indicator.offline {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+  }
+
+  .status-indicator.online .status-dot {
+    background: #28a745;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .status-indicator.offline .status-dot {
+    background: #ffc107;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .status-text {
+    white-space: nowrap;
+  }
+
+  .notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 1000;
+    animation: slideDown 0.3s ease;
+    max-width: 90%;
+  }
+
+  @keyframes slideDown {
+    from {
+      transform: translateX(-50%) translateY(-20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .notification-info {
+    background: #d1ecf1;
+    color: #0c5460;
+  }
+
+  .notification-success {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .notification-warning {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  .notification-error {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  .notification-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 8px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+
+  .notification-close:hover {
+    opacity: 1;
   }
 
   h1 {
