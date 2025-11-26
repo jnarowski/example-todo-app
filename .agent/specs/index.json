@@ -24,11 +24,11 @@
     },
     "2511261222": {
       "folder": "2511261222-hourly-estimate",
-      "path": "todo/2511261222-hourly-estimate/spec.md",
+      "path": "done/2511261222-hourly-estimate/spec.md",
       "spec_type": "feature",
       "status": "completed",
       "created": "2025-11-26T12:22:00Z",
-      "updated": "2025-11-26T20:00:00Z",
+      "updated": "2025-11-26T20:23:00Z",
       "totalComplexity": 47,
       "phaseCount": 4,
       "taskCount": 11

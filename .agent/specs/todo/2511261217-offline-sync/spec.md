@@ -213,7 +213,7 @@ Dismissible banner alerting user they're offline.
 
 **Phase Complexity**: 23 points (avg 7.7/10)
 
-- [ ] 2.1 [7/10] Implement connectivity monitoring utility
+- [x] 2.1 [7/10] Implement connectivity monitoring utility
   - Create utility monitoring `navigator.onLine` status
   - Listen to online/offline window events
   - Provide `isOnline()` getter and `onConnectionChange(callback)` subscriber
@@ -221,7 +221,7 @@ Dismissible banner alerting user they're offline.
   - File: `src/lib/utils/connectivity.js`
   - Test: Toggle network in DevTools, verify events fire
 
-- [ ] 2.2 [8/10] Create sync state management store
+- [x] 2.2 [8/10] Create sync state management store
   - Implement writable store with sync state: `{ isOnline, isSyncing, lastSyncTime, pendingOps: [], syncError }`
   - Export derived stores: `isOffline`, `hasPendingOps`
   - Provide actions: `setOnlineStatus()`, `startSync()`, `endSync()`, `addPendingOp()`, `clearPendingOps()`, `setSyncError()`
@@ -229,7 +229,7 @@ Dismissible banner alerting user they're offline.
   - File: `src/lib/stores/syncStore.js`
   - Test: Import and log `$syncStore`, verify initial state
 
-- [ ] 2.3 [8/10] Build sync service with operation queue and conflict resolution
+- [x] 2.3 [8/10] Build sync service with operation queue and conflict resolution
   - Initialize service with connectivity monitoring
   - Queue operations as `{ id, type, payload, timestamp }` when offline
   - On reconnect: replay pending operations in order
@@ -241,16 +241,19 @@ Dismissible banner alerting user they're offline.
 
 #### Completion Notes
 
-- What was implemented:
-- Deviations from plan (if any):
-- Important context or decisions:
-- Known issues or follow-ups (if any):
+- Implemented full connectivity monitoring with online/offline event listeners and 5s polling fallback for Safari
+- Sync store created with all required state fields and derived stores (isOffline, hasPendingOps, canSync)
+- Sync service implements complete operation queueing and replay functionality
+- Last-write-wins conflict resolution algorithm fully documented with detailed comments explaining strategy and limitations
+- Retry logic with exponential backoff (max 3 attempts, starting at 1s delay)
+- 10-second sync timeout implemented to prevent hanging operations
+- Operations are intelligently filtered to skip deleted items that no longer exist
 
 ### Phase 3: UI Integration & Status Display
 
 **Phase Complexity**: 16 points (avg 5.3/10)
 
-- [ ] 3.1 [5/10] Create sync status indicator component
+- [x] 3.1 [5/10] Create sync status indicator component
   - Build component subscribing to `$syncStore`
   - Display icon based on state: ✓ (synced), ↻ (syncing), ⚠ (offline)
   - Show "Last synced X ago" tooltip on hover
@@ -259,7 +262,7 @@ Dismissible banner alerting user they're offline.
   - File: `src/components/SyncStatus.svelte`
   - Styling: Absolute position top-right, 40px size, subtle shadow
 
-- [ ] 3.2 [5/10] Create offline mode banner component
+- [x] 3.2 [5/10] Create offline mode banner component
   - Build banner subscribing to `$isOffline` derived store
   - Show warning banner at top when offline
   - Message: "You're offline. Changes will sync when reconnected."
@@ -268,7 +271,7 @@ Dismissible banner alerting user they're offline.
   - File: `src/components/OfflineBanner.svelte`
   - Styling: Yellow/amber background (#FFF3CD), top of viewport, padding 12px
 
-- [ ] 3.3 [6/10] Integrate sync components into main app
+- [x] 3.3 [6/10] Integrate sync components into main app
   - Import and initialize syncService in main.js
   - Add `<SyncStatus />` and `<OfflineBanner />` to App.svelte
   - Subscribe todoStore operations to queue in syncService when offline
@@ -278,10 +281,13 @@ Dismissible banner alerting user they're offline.
 
 #### Completion Notes
 
-- What was implemented:
-- Deviations from plan (if any):
-- Important context or decisions:
-- Known issues or follow-ups (if any):
+- Created polished SyncStatus component with all three status icons (synced, syncing, offline)
+- Implemented smart tooltip showing status and relative time formatting (minutes, hours, days)
+- Pulse animation during sync and spin animation on sync icon
+- OfflineBanner component with Svelte slide transition (250ms as specified)
+- Both components fully integrated into App.svelte and main.js
+- Operation queueing hooked into all todo operations (add, toggle, delete)
+- Minor a11y warning on SyncStatus about keyboard handler (non-blocking, can be addressed in future polish)
 
 ### Phase 4: Testing & Polish
 
