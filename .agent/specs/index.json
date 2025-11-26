@@ -26,9 +26,9 @@
       "folder": "2511261222-hourly-estimate",
       "path": "todo/2511261222-hourly-estimate/spec.md",
       "spec_type": "feature",
-      "status": "review",
+      "status": "completed",
       "created": "2025-11-26T12:22:00Z",
-      "updated": "2025-11-26T19:35:00Z",
+      "updated": "2025-11-26T20:00:00Z",
       "totalComplexity": 47,
       "phaseCount": 4,
       "taskCount": 11
