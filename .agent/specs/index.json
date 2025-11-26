@@ -13,11 +13,11 @@
     },
     "2511260922": {
       "folder": "2511260922-prisma-integration",
-      "path": "todo/2511260922-prisma-integration/spec.md",
+      "path": "done/2511260922-prisma-integration/spec.md",
       "spec_type": "feature",
       "status": "completed",
       "created": "2025-11-26T09:22:19Z",
-      "updated": "2025-11-26T17:40:00Z",
+      "updated": "2025-11-26T17:55:00Z",
       "totalComplexity": 68,
       "phaseCount": 4,
       "taskCount": 12
