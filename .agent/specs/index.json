@@ -24,11 +24,11 @@
     },
     "2511261358": {
       "folder": "2511261358-dancing-robot",
-      "path": "todo/2511261358-dancing-robot/spec.md",
+      "path": "done/2511261358-dancing-robot/spec.md",
       "spec_type": "feature",
       "status": "completed",
       "created": "2025-11-26T13:58:00Z",
-      "updated": "2025-11-26T21:04:12Z",
+      "updated": "2025-11-26T21:04:45Z",
       "totalComplexity": 28,
       "phaseCount": 3,
       "taskCount": 7
