@@ -1,7 +1,20 @@
 <script>
+  import { onMount } from 'svelte';
+  import { loadTodos, saveTodos } from './lib/storage';
+
   let todos = [];
   let newTodo = '';
   let nextId = 1;
+
+  onMount(() => {
+    todos = loadTodos();
+    if (todos.length > 0) {
+      nextId = Math.max(...todos.map(t => t.id)) + 1;
+    }
+  });
+
+  // Auto-save todos to localStorage whenever they change
+  $: if (todos) saveTodos(todos);
 
   function addTodo() {
     if (newTodo.trim()) {
