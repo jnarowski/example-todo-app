@@ -65,6 +65,7 @@
     <div class="stats">
       <span class="stat">Active: {activeTodos}</span>
       <span class="stat">Completed: {completedTodos}</span>
+      <span class="stat">Estimated: {totalEstimate.toFixed(1)}h</span>
     </div>
 
     <div class="input-section">
@@ -96,6 +97,9 @@
             id="todo-{todo.id}"
           />
           <label for="todo-{todo.id}" class="todo-text">{todo.text}</label>
+          {#if todo.estimatedHours}
+            <span class="estimate">{todo.estimatedHours}h</span>
+          {/if}
           <button on:click={() => deleteTodo(todo.id)} class="delete-button">
             Delete
           </button>
@@ -162,6 +166,20 @@
     border-color: #667eea;
   }
 
+  .estimate-input {
+    width: 120px;
+    padding: 12px 16px;
+    font-size: 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .estimate-input:focus {
+    border-color: #667eea;
+  }
+
   .add-button {
     padding: 12px 24px;
     font-size: 16px;
@@ -222,6 +240,15 @@
   .todo-item.completed .todo-text {
     text-decoration: line-through;
     color: #999;
+  }
+
+  .estimate {
+    font-size: 14px;
+    color: #999;
+    margin-left: auto;
+    padding: 4px 8px;
+    background: #f5f5f5;
+    border-radius: 4px;
   }
 
   .delete-button {
