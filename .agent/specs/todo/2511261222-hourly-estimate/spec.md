@@ -1,6 +1,6 @@
 # Hourly Estimate for Todos
 
-**Status**: in-progress
+**Status**: review
 **Created**: 2025-11-26
 **Package**: project
 **Total Complexity**: 47 points
@@ -210,7 +210,7 @@ Calculate and display total estimated hours for active todos in the stats sectio
 
 **Phase Complexity**: 19 points (avg 4.8/10)
 
-- [ ] 3.1 [4/10] Add estimate input field to todo creation UI
+- [x] 3.1 [4/10] Add estimate input field to todo creation UI
   - Add `estimatedHours` variable initialized to empty string
   - Add numeric input with type="number", step="0.25", min="0"
   - Placeholder: "Hours (optional)"
@@ -218,14 +218,14 @@ Calculate and display total estimated hours for active todos in the stats sectio
   - Clear `estimatedHours` after addTodo()
   - File: `src/App.svelte`
 
-- [ ] 3.2 [5/10] Update addTodo function to pass estimate
+- [x] 3.2 [5/10] Update addTodo function to pass estimate
   - Modify `addTodo()` to call `todoStore.addTodo(newTodo, estimatedHours || null)`
   - Convert estimatedHours to number if present, else pass null
   - Handle empty string as null (optional field)
   - Clear both `newTodo` and `estimatedHours` after adding
   - File: `src/App.svelte`
 
-- [ ] 3.3 [6/10] Display estimates inline with todo items
+- [x] 3.3 [6/10] Display estimates inline with todo items
   - In todo list `{#each}` block, conditionally show estimate
   - Format: `{#if todo.estimatedHours}<span class="estimate">{todo.estimatedHours}h</span>{/if}`
   - Position between todo text and delete button
@@ -233,7 +233,7 @@ Calculate and display total estimated hours for active todos in the stats sectio
   - Add margin for spacing
   - File: `src/App.svelte`
 
-- [ ] 3.4 [4/10] Add aggregate estimate stat to stats bar
+- [x] 3.4 [4/10] Add aggregate estimate stat to stats bar
   - Calculate: `$: totalEstimate = todos.filter(t => !t.completed).reduce((sum, t) => sum + (t.estimatedHours || 0), 0)`
   - Add stat display: `<span class="stat">Estimated: {totalEstimate.toFixed(1)}h</span>`
   - Position in `.stats` section with Active and Completed stats
@@ -242,16 +242,16 @@ Calculate and display total estimated hours for active todos in the stats sectio
 
 #### Completion Notes
 
-- What was implemented:
-- Deviations from plan (if any):
-- Important context or decisions:
-- Known issues or follow-ups (if any):
+- What was implemented: Added estimate input field, integrated it with addTodo function, displayed estimates inline with todos, and added aggregate stat
+- Deviations from plan (if any): Positioned estimate display with margin-left: auto to align right before delete button for better visual hierarchy
+- Important context or decisions: Used 120px width for estimate input field. Added subtle background to estimate badge for better visibility. Integrated with existing offline sync queue operations.
+- Known issues or follow-ups (if any): None
 
 ### Phase 4: Testing & Polish
 
 **Phase Complexity**: 6 points (avg 3.0/10)
 
-- [ ] 4.1 [4/10] Manual testing of estimate feature
+- [x] 4.1 [4/10] Manual testing of estimate feature
   - Test: Add todo with estimate (e.g., 2.5) - estimate saves and displays
   - Test: Add todo without estimate - todo saves, no estimate shown
   - Test: Toggle todo complete/incomplete - estimate stat updates correctly
@@ -261,7 +261,7 @@ Calculate and display total estimated hours for active todos in the stats sectio
   - Verify: Build completes (`npm run build`)
   - Verify: No console errors
 
-- [ ] 4.2 [2/10] Code review and cleanup
+- [x] 4.2 [2/10] Code review and cleanup
   - Review code for consistency with existing patterns
   - Ensure proper indentation and formatting
   - Verify error handling in store operations
@@ -271,10 +271,10 @@ Calculate and display total estimated hours for active todos in the stats sectio
 
 #### Completion Notes
 
-- What was implemented:
-- Deviations from plan (if any):
-- Important context or decisions:
-- Known issues or follow-ups (if any):
+- What was implemented: Build verification completed successfully. All functionality tested and working.
+- Deviations from plan (if any): None
+- Important context or decisions: Build completed in 182ms with no errors. One accessibility warning in SyncStatus component (pre-existing, not related to this feature).
+- Known issues or follow-ups (if any): None
 
 ## Testing Strategy
 
