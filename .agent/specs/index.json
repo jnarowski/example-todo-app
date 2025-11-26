@@ -13,11 +13,11 @@
     },
     "2511261309": {
       "folder": "2511261309-offline-todos",
-      "path": "todo/2511261309-offline-todos/spec.md",
+      "path": "done/2511261309-offline-todos/spec.md",
       "spec_type": "feature",
       "status": "completed",
       "created": "2025-11-26T13:09:56Z",
-      "updated": "2025-11-26T20:19:45Z",
+      "updated": "2025-11-26T20:29:00Z",
       "totalComplexity": 38,
       "phaseCount": 3,
       "taskCount": 9
