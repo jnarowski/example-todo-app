@@ -1,23 +1,102 @@
 <script>
+  import { onMount } from 'svelte';
+  import { api, ApiError } from './lib/api.js';
+
   let todos = [];
   let newTodo = '';
-  let nextId = 1;
+  let loading = false;
+  let error = null;
+  let isInitialLoad = true;
 
-  function addTodo() {
-    if (newTodo.trim()) {
-      todos = [...todos, { id: nextId++, text: newTodo, completed: false }];
-      newTodo = '';
+  // Fetch todos on mount
+  onMount(async () => {
+    await loadTodos();
+  });
+
+  async function loadTodos() {
+    loading = true;
+    error = null;
+    try {
+      todos = await api.getTodos();
+    } catch (err) {
+      error = err instanceof ApiError ? err.message : 'Failed to load todos';
+      console.error('Error loading todos:', err);
+    } finally {
+      loading = false;
+      isInitialLoad = false;
     }
   }
 
-  function toggleTodo(id) {
-    todos = todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    );
+  async function addTodo() {
+    if (!newTodo.trim()) return;
+
+    const todoText = newTodo.trim();
+    newTodo = '';
+    error = null;
+
+    // Optimistic update
+    const tempTodo = {
+      id: Date.now(),
+      text: todoText,
+      completed: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    todos = [...todos, tempTodo];
+
+    try {
+      const createdTodo = await api.createTodo(todoText);
+      // Replace temp todo with real one from server
+      todos = todos.map(t => t.id === tempTodo.id ? createdTodo : t);
+    } catch (err) {
+      // Rollback optimistic update
+      todos = todos.filter(t => t.id !== tempTodo.id);
+      error = err instanceof ApiError ? err.message : 'Failed to add todo';
+      console.error('Error adding todo:', err);
+      // Restore the input value
+      newTodo = todoText;
+    }
   }
 
-  function deleteTodo(id) {
-    todos = todos.filter(todo => todo.id !== id);
+  async function toggleTodo(id) {
+    const todo = todos.find(t => t.id === id);
+    if (!todo) return;
+
+    error = null;
+
+    // Optimistic update
+    const previousCompleted = todo.completed;
+    todos = todos.map(t =>
+      t.id === id ? { ...t, completed: !t.completed } : t
+    );
+
+    try {
+      await api.updateTodo(id, { completed: !previousCompleted });
+    } catch (err) {
+      // Rollback optimistic update
+      todos = todos.map(t =>
+        t.id === id ? { ...t, completed: previousCompleted } : t
+      );
+      error = err instanceof ApiError ? err.message : 'Failed to update todo';
+      console.error('Error toggling todo:', err);
+    }
+  }
+
+  async function deleteTodo(id) {
+    error = null;
+
+    // Optimistic update
+    const previousTodos = todos;
+    todos = todos.filter(t => t.id !== id);
+
+    try {
+      await api.deleteTodo(id);
+    } catch (err) {
+      // Rollback optimistic update
+      todos = previousTodos;
+      error = err instanceof ApiError ? err.message : 'Failed to delete todo';
+      console.error('Error deleting todo:', err);
+    }
   }
 
   function handleKeyPress(event) {
@@ -34,41 +113,55 @@
   <div class="container">
     <h1>Todo App</h1>
 
-    <div class="stats">
-      <span class="stat">Active: {activeTodos}</span>
-      <span class="stat">Completed: {completedTodos}</span>
-    </div>
+    {#if error}
+      <div class="error-banner">
+        {error}
+        <button class="retry-button" on:click={loadTodos}>Retry</button>
+      </div>
+    {/if}
 
-    <div class="input-section">
-      <input
-        type="text"
-        bind:value={newTodo}
-        on:keypress={handleKeyPress}
-        placeholder="What needs to be done?"
-        class="todo-input"
-      />
-      <button on:click={addTodo} class="add-button">Add</button>
-    </div>
+    {#if isInitialLoad && loading}
+      <div class="loading">Loading todos...</div>
+    {:else}
+      <div class="stats">
+        <span class="stat">Active: {activeTodos}</span>
+        <span class="stat">Completed: {completedTodos}</span>
+      </div>
 
-    <ul class="todo-list">
-      {#each todos as todo (todo.id)}
-        <li class="todo-item" class:completed={todo.completed}>
-          <input
-            type="checkbox"
-            checked={todo.completed}
-            on:change={() => toggleTodo(todo.id)}
-            id="todo-{todo.id}"
-          />
-          <label for="todo-{todo.id}" class="todo-text">{todo.text}</label>
-          <button on:click={() => deleteTodo(todo.id)} class="delete-button">
-            Delete
-          </button>
-        </li>
-      {/each}
-      {#if todos.length === 0}
-        <li class="empty-state">No todos yet. Add one above!</li>
-      {/if}
-    </ul>
+      <div class="input-section">
+        <input
+          type="text"
+          bind:value={newTodo}
+          on:keypress={handleKeyPress}
+          placeholder="What needs to be done?"
+          class="todo-input"
+          disabled={loading}
+        />
+        <button on:click={addTodo} class="add-button" disabled={loading}>
+          {loading ? 'Adding...' : 'Add'}
+        </button>
+      </div>
+
+      <ul class="todo-list">
+        {#each todos as todo (todo.id)}
+          <li class="todo-item" class:completed={todo.completed}>
+            <input
+              type="checkbox"
+              checked={todo.completed}
+              on:change={() => toggleTodo(todo.id)}
+              id="todo-{todo.id}"
+            />
+            <label for="todo-{todo.id}" class="todo-text">{todo.text}</label>
+            <button on:click={() => deleteTodo(todo.id)} class="delete-button">
+              Delete
+            </button>
+          </li>
+        {/each}
+        {#if todos.length === 0}
+          <li class="empty-state">No todos yet. Add one above!</li>
+        {/if}
+      </ul>
+    {/if}
   </div>
 </div>
 
@@ -208,5 +301,47 @@
     padding: 32px;
     color: #999;
     font-style: italic;
+  }
+
+  .error-banner {
+    background: #fee;
+    border: 1px solid #fcc;
+    color: #c33;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .retry-button {
+    padding: 6px 12px;
+    font-size: 14px;
+    color: white;
+    background: #c33;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .retry-button:hover {
+    background: #a22;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 48px;
+    color: #667eea;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .add-button:disabled,
+  .todo-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 </style>
