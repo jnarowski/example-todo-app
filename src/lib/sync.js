@@ -15,22 +15,32 @@ export const lastSyncTime = writable(null);
 export const syncStatus = writable('idle'); // 'idle' | 'syncing' | 'synced' | 'error'
 
 /**
+ * Event handler for online event
+ */
+function handleOnline() {
+  isOnline.set(true);
+  console.log('Connection: Online');
+}
+
+/**
+ * Event handler for offline event
+ */
+function handleOffline() {
+  isOnline.set(false);
+  syncStatus.set('idle');
+  console.log('Connection: Offline');
+}
+
+/**
  * Initialize connection monitoring
  * Sets up event listeners for online/offline events
  */
 export function initConnectionMonitor() {
   // Update store when going online
-  window.addEventListener('online', () => {
-    isOnline.set(true);
-    console.log('Connection: Online');
-  });
+  window.addEventListener('online', handleOnline);
 
   // Update store when going offline
-  window.addEventListener('offline', () => {
-    isOnline.set(false);
-    syncStatus.set('idle');
-    console.log('Connection: Offline');
-  });
+  window.addEventListener('offline', handleOffline);
 
   // Set initial state
   isOnline.set(navigator.onLine);
@@ -43,15 +53,6 @@ export function initConnectionMonitor() {
 export function cleanupConnectionMonitor() {
   window.removeEventListener('online', handleOnline);
   window.removeEventListener('offline', handleOffline);
-}
-
-function handleOnline() {
-  isOnline.set(true);
-}
-
-function handleOffline() {
-  isOnline.set(false);
-  syncStatus.set('idle');
 }
 
 // Debounce timer for auto-sync

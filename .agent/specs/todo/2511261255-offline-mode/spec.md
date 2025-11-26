@@ -389,16 +389,16 @@ No issues found. Storage layer is comprehensive with proper error handling, JSON
 
 ### Phase 2: Sync Layer
 
-**Status:** ⚠️ Incomplete - Core functionality works but cleanup function has bugs
+**Status:** ✅ Complete - Core functionality works and cleanup function fixed
 
 #### MEDIUM Priority
 
-- [ ] **cleanupConnectionMonitor function references undefined functions**
+- [x] **cleanupConnectionMonitor function references undefined functions** ✅ FIXED
   - **File:** `src/lib/sync.js:43-45`
   - **Spec Reference:** "Phase 2.1: Implement connection status tracking using navigator.onLine. Add event listeners for online/offline events"
   - **Expected:** Cleanup function should properly remove the event listeners that were added in `initConnectionMonitor`
   - **Actual:** The function tries to remove listeners using `handleOnline` and `handleOffline` function references, but these functions are defined inside `cleanupConnectionMonitor` (lines 48-55) and are not the same references used in `initConnectionMonitor` (lines 23-33), which uses inline arrow functions
-  - **Fix:** Either (1) define `handleOnline` and `handleOffline` at module scope and reference them in both init and cleanup, or (2) remove the broken cleanup function since it's not currently being called from `App.svelte` anyway (onDestroy only calls unsubscribe)
+  - **Fix:** Moved `handleOnline` and `handleOffline` to module scope and updated both `initConnectionMonitor` and `cleanupConnectionMonitor` to reference the same function instances, ensuring proper cleanup
 
 ### Phase 3: UI Indicators
 
