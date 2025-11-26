@@ -13,11 +13,11 @@
     },
     "2511261328": {
       "folder": "2511261328-task-priority",
-      "path": "todo/2511261328-task-priority/spec.md",
+      "path": "done/2511261328-task-priority/spec.md",
       "spec_type": "feature",
       "status": "completed",
       "created": "2025-11-26T13:28:42Z",
-      "updated": "2025-11-26T21:32:00Z",
+      "updated": "2025-11-26T21:36:00Z",
       "totalComplexity": 23,
       "phaseCount": 3,
       "taskCount": 9
