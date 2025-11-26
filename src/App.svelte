@@ -1,23 +1,44 @@
 <script>
-  let todos = [];
+  import { todoStore } from './lib/stores/todoStore.js';
+  import { queueOperation, shouldQueueOperations } from './lib/services/syncService.js';
+  import SyncStatus from './components/SyncStatus.svelte';
+  import OfflineBanner from './components/OfflineBanner.svelte';
+
   let newTodo = '';
-  let nextId = 1;
+  let estimatedHours = '';
 
   function addTodo() {
     if (newTodo.trim()) {
-      todos = [...todos, { id: nextId++, text: newTodo, completed: false }];
+      const text = newTodo;
+      const hours = estimatedHours ? parseFloat(estimatedHours) : null;
+      todoStore.addTodo(text, hours);
+
+      // Queue operation if offline
+      if (shouldQueueOperations()) {
+        queueOperation('add', { text, estimatedHours: hours });
+      }
+
       newTodo = '';
+      estimatedHours = '';
     }
   }
 
   function toggleTodo(id) {
-    todos = todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    );
+    todoStore.toggleTodo(id);
+
+    // Queue operation if offline
+    if (shouldQueueOperations()) {
+      queueOperation('toggle', { id });
+    }
   }
 
   function deleteTodo(id) {
-    todos = todos.filter(todo => todo.id !== id);
+    todoStore.deleteTodo(id);
+
+    // Queue operation if offline
+    if (shouldQueueOperations()) {
+      queueOperation('delete', { id });
+    }
   }
 
   function handleKeyPress(event) {
@@ -26,9 +47,16 @@
     }
   }
 
+  $: todos = $todoStore.todos;
   $: activeTodos = todos.filter(todo => !todo.completed).length;
   $: completedTodos = todos.filter(todo => todo.completed).length;
+  $: totalEstimate = todos
+    .filter(todo => !todo.completed)
+    .reduce((sum, todo) => sum + (todo.estimatedHours || 0), 0);
 </script>
+
+<OfflineBanner />
+<SyncStatus />
 
 <div class="todo-app">
   <div class="container">
@@ -46,6 +74,14 @@
         on:keypress={handleKeyPress}
         placeholder="What needs to be done?"
         class="todo-input"
+      />
+      <input
+        type="number"
+        bind:value={estimatedHours}
+        placeholder="Hours (optional)"
+        class="estimate-input"
+        min="0"
+        step="0.25"
       />
       <button on:click={addTodo} class="add-button">Add</button>
     </div>

@@ -10,6 +10,28 @@
       "totalComplexity": 32,
       "phaseCount": 3,
       "taskCount": 8
+    },
+    "2511261217": {
+      "folder": "2511261217-offline-sync",
+      "path": "todo/2511261217-offline-sync/spec.md",
+      "spec_type": "feature",
+      "status": "review",
+      "created": "2025-11-26T12:17:00Z",
+      "updated": "2025-11-26T19:25:00Z",
+      "totalComplexity": 67,
+      "phaseCount": 4,
+      "taskCount": 11
+    },
+    "2511261222": {
+      "folder": "2511261222-hourly-estimate",
+      "path": "todo/2511261222-hourly-estimate/spec.md",
+      "spec_type": "feature",
+      "status": "in-progress",
+      "created": "2025-11-26T12:22:00Z",
+      "updated": "2025-11-26T19:30:00Z",
+      "totalComplexity": 47,
+      "phaseCount": 4,
+      "taskCount": 11
     }
   }
 }
