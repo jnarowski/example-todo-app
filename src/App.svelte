@@ -1,4 +1,6 @@
 <script>
+  import DancingRobot from './components/DancingRobot.svelte';
+
   let todos = [];
   let newTodo = '';
   let nextId = 1;
@@ -31,6 +33,8 @@
 </script>
 
 <div class="todo-app">
+  <DancingRobot />
+
   <div class="container">
     <h1>Todo App</h1>
 
