@@ -1,5 +1,7 @@
 <script>
   import { onMount } from 'svelte';
+  import StoryModal from './components/StoryModal.svelte';
+  import { getRandomStory } from './data/stories.js';
 
   // Storage constants
   const STORAGE_KEY = 'svelte-todo-app-v1';
@@ -105,6 +107,10 @@
   let newTodo = '';
   let nextId = 1;
 
+  // Story feature state
+  let showStory = false;
+  let currentStory = null;
+
   // Load persisted todos on component mount
   onMount(() => {
     const data = loadTodosFromStorage();
@@ -138,6 +144,15 @@
     }
   }
 
+  function handleShowStory() {
+    currentStory = getRandomStory();
+    showStory = true;
+  }
+
+  function handleCloseStory() {
+    showStory = false;
+  }
+
   $: activeTodos = todos.filter(todo => !todo.completed).length;
   $: completedTodos = todos.filter(todo => todo.completed).length;
 
@@ -154,6 +169,12 @@
     <div class="stats">
       <span class="stat">Active: {activeTodos}</span>
       <span class="stat">Completed: {completedTodos}</span>
+    </div>
+
+    <div class="story-section">
+      <button on:click={handleShowStory} class="story-button">
+        Tell me a story
+      </button>
     </div>
 
     <div class="input-section">
@@ -189,6 +210,8 @@
   </div>
 </div>
 
+<StoryModal story={currentStory} onClose={handleCloseStory} />
+
 <style>
   .todo-app {
     width: 100%;
@@ -221,6 +244,33 @@
     border-radius: 20px;
     font-size: 14px;
     color: #666;
+  }
+
+  .story-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .story-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .story-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  .story-button:active {
+    transform: translateY(0);
   }
 
   .input-section {
