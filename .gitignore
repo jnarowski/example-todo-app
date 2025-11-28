@@ -1,6 +1,7 @@
 # Agent workflow artifacts
 .agent/logs/**
 .agent/workflows/runs/**
+.worktrees/
 
 # Dependencies
 node_modules/
