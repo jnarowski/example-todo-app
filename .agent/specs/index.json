@@ -1,5 +1,6 @@
 {
   "specs": {
+<<<<<<< HEAD
     "2511250629": {
       "folder": "2511250629-story-feature",
       "path": "todo/2511250629-story-feature/spec.md",
@@ -10,6 +11,18 @@
       "totalComplexity": 32,
       "phaseCount": 3,
       "taskCount": 8
+=======
+    "2511241504": {
+      "folder": "2511241504-localstorage-persistence",
+      "path": "done/2511241504-localstorage-persistence/spec.md",
+      "spec_type": "feature",
+      "status": "completed",
+      "created": "2025-11-24T22:05:56Z",
+      "updated": "2025-11-24T23:04:00Z",
+      "totalComplexity": 42,
+      "phaseCount": 3,
+      "taskCount": 9
+>>>>>>> a4124d985c1a9c57c31c104820b6d9c108df2be9
     }
   }
 }
