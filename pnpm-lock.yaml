@@ -12,8 +12,8 @@ importers:
         specifier: ^3.0.1
         version: 3.1.2(svelte@4.2.20)(vite@5.4.21(@types/node@24.10.1))
       agentcmd-workflows:
-        specifier: ^1.1.31
-        version: 1.1.31(inngest@3.46.0(@opentelemetry/core@2.2.0(@opentelemetry/api@1.9.0))(typescript@5.9.3)(zod@4.1.13))
+        specifier: ^1.2.1
+        version: 1.2.1(inngest@3.46.0(@opentelemetry/core@2.2.0(@opentelemetry/api@1.9.0))(typescript@5.9.3)(zod@4.1.13))
       svelte:
         specifier: ^4.2.8
         version: 4.2.20
@@ -868,8 +868,8 @@ packages:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
 
-  agentcmd-workflows@1.1.31:
-    resolution: {integrity: sha512-1DJPAGiTGytDTgHmqSV+HXSzU+oCHGmRXPSkYiRj50WLuAoTa93Mj6l13EPIMeaz0WylR8q8m6LwXW6870zeFA==}
+  agentcmd-workflows@1.2.1:
+    resolution: {integrity: sha512-A1HMNtKzFK7YQRNnEvTD8ywusTVkC1FfQK1o0/I8HHO78RbKH8xv893qcIy4bQ94MTbZ39FZfRwBOy+5+I664A==}
     engines: {node: '>=22.0.0'}
     hasBin: true
     peerDependencies:
@@ -2279,7 +2279,7 @@ snapshots:
 
   agent-base@7.1.4: {}
 
-  agentcmd-workflows@1.1.31(inngest@3.46.0(@opentelemetry/core@2.2.0(@opentelemetry/api@1.9.0))(typescript@5.9.3)(zod@4.1.13)):
+  agentcmd-workflows@1.2.1(inngest@3.46.0(@opentelemetry/core@2.2.0(@opentelemetry/api@1.9.0))(typescript@5.9.3)(zod@4.1.13)):
     dependencies:
       commander: 14.0.2
       gray-matter: 4.0.3
