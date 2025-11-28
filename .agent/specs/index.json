@@ -1,18 +1,5 @@
 {
   "specs": {
-<<<<<<< HEAD
-    "2511250629": {
-      "folder": "2511250629-story-feature",
-      "path": "todo/2511250629-story-feature/spec.md",
-      "spec_type": "feature",
-      "status": "review",
-      "created": "2025-11-25T13:29:41Z",
-      "updated": "2025-11-26T13:55:02Z",
-      "totalComplexity": 32,
-      "phaseCount": 3,
-      "taskCount": 8
-<<<<<<< Updated upstream
-=======
     "2511241504": {
       "folder": "2511241504-localstorage-persistence",
       "path": "done/2511241504-localstorage-persistence/spec.md",
@@ -23,8 +10,17 @@
       "totalComplexity": 42,
       "phaseCount": 3,
       "taskCount": 9
->>>>>>> a4124d985c1a9c57c31c104820b6d9c108df2be9
-=======
+    },
+    "2511250629": {
+      "folder": "2511250629-story-feature",
+      "path": "todo/2511250629-story-feature/spec.md",
+      "spec_type": "feature",
+      "status": "review",
+      "created": "2025-11-25T13:29:41Z",
+      "updated": "2025-11-26T13:55:02Z",
+      "totalComplexity": 32,
+      "phaseCount": 3,
+      "taskCount": 8
     },
     "2511261644": {
       "folder": "2511261644-update-claude-doc",
@@ -36,7 +32,17 @@
       "totalComplexity": 12,
       "phaseCount": 2,
       "taskCount": 4
->>>>>>> Stashed changes
+    },
+    "2511281034": {
+      "folder": "2511281034-flag-todo",
+      "path": "todo/2511281034-flag-todo/spec.md",
+      "spec_type": "issue",
+      "status": "draft",
+      "created": "2025-11-28T10:34:00Z",
+      "updated": "2025-11-28T10:34:00Z",
+      "totalComplexity": 28,
+      "phaseCount": 1,
+      "taskCount": 6
     }
   }
 }
