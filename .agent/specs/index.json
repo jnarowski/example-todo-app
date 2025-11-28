@@ -11,6 +11,7 @@
       "totalComplexity": 32,
       "phaseCount": 3,
       "taskCount": 8
+<<<<<<< Updated upstream
 =======
     "2511241504": {
       "folder": "2511241504-localstorage-persistence",
@@ -23,6 +24,19 @@
       "phaseCount": 3,
       "taskCount": 9
 >>>>>>> a4124d985c1a9c57c31c104820b6d9c108df2be9
+=======
+    },
+    "2511261644": {
+      "folder": "2511261644-update-claude-doc",
+      "path": "todo/2511261644-update-claude-doc/spec.md",
+      "spec_type": "feature",
+      "status": "draft",
+      "created": "2025-11-26T16:44:00Z",
+      "updated": "2025-11-26T16:44:00Z",
+      "totalComplexity": 12,
+      "phaseCount": 2,
+      "taskCount": 4
+>>>>>>> Stashed changes
     }
   }
 }
