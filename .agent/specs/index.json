@@ -26,9 +26,9 @@
       "folder": "2511261644-update-claude-doc",
       "path": "todo/2511261644-update-claude-doc/spec.md",
       "spec_type": "feature",
-      "status": "draft",
+      "status": "review",
       "created": "2025-11-26T16:44:00Z",
-      "updated": "2025-11-26T16:44:00Z",
+      "updated": "2025-11-30T06:30:00Z",
       "totalComplexity": 12,
       "phaseCount": 2,
       "taskCount": 4
