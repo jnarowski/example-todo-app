@@ -24,11 +24,11 @@
     },
     "2511261644": {
       "folder": "2511261644-update-claude-doc",
-      "path": "todo/2511261644-update-claude-doc/spec.md",
+      "path": "done/2511261644-update-claude-doc/spec.md",
       "spec_type": "feature",
       "status": "completed",
       "created": "2025-11-26T16:44:00Z",
-      "updated": "2025-11-30T13:33:08Z",
+      "updated": "2025-11-30T19:00:00Z",
       "totalComplexity": 12,
       "phaseCount": 2,
       "taskCount": 4
